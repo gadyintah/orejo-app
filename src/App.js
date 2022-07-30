@@ -1,24 +1,43 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import Home from './pages/reminder';
+import Login from './pages/Login';
+import Logout from './pages/Logout';
+import Register from './pages/Register';
+import AppNavbar from './components/AppNavbar';
+import ErrorPage from './components/ErrorPage';
+import { Container } from 'react-bootstrap';
+
+import { UserProvider } from './UserContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
+  const [user, setUser] = useState({
+    accessToken: localStorage.getItem('accessToken'),
+    email: localStorage.getItem('email'),
+    isAdmin: localStorage.getItem('isAdmin')
+  })
+
+  //Function for clearing localStorage on logout
+  const unsetUser = () => {
+        localStorage.clear()
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Eto na ang simula. 12 days to go for Software Engineer! 🍻
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserProvider value={{user, setUser, unsetUser}}>
+      <Router>
+        <AppNavbar />
+        <Container>
+          <Routes>
+            < Route path="/" element={ <Home /> }/>
+            < Route path="/login" element={ <Login /> }/>
+            < Route path="/register" element={ <Register /> }/>        
+            < Route path="/logout" element={ <Logout /> }/>
+            < Route path="*" element={ <ErrorPage /> }/>
+          </Routes>
+        </Container>
+      </Router>
+    </UserProvider>
   );
 }
 
